@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ReciverSMSonCall</string>
+    <string name="enter_the_phone_number_of_recipient">Enter the phone number of recipient</string>
+    <string name="message">Message</string>
+    <string name="send_sms">Send SMS</string>
+    <string name="call">CALL</string>
+    <string name="_nG">Номер телефона с которого придёт сообщение</string>
+    <string name="_nS">Номер телефона на который нужнго позвонить</string>
+    <string name="_t">Содержание ообщения</string>
+    <string name="_infSMS"> * - реакция на любое сообщение</string>
+    <string name="_infNUMB">* - реакция на любой номер</string>
+    <string name="_Set">Приминить</string>
+    <string name="TEST">TEST</string>
+</resources>
