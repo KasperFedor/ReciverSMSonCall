@@ -31,13 +31,14 @@
 
         <service android:name="BackGroubd"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="true"
+            android:stopWithTask="false">
         </service>
 
     </application>
 
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 </manifest>

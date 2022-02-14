@@ -6,12 +6,14 @@ import static android.telephony.AvailableNetworkInfo.PRIORITY_HIGH;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +23,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
-
-
     private NotificationManager notificationManager;
     private static final int NOTIFY_ID = 101;
     private static final String CHANNEL_ID = "CHANNEL_ID";
@@ -40,23 +39,11 @@ public class MainActivity extends AppCompatActivity {
     EditText phoneGet;
     EditText phoneSet;
     EditText txt;
+    SharedPreferences sPref;
 
-    Handler h = new Handler();
-    Runnable run = new Runnable() {
-        //Новый поток для проверки разрешения звонка
-        @Override
-        public void run() {
-            //проверка разрешения звонка
-            Toast.makeText(MainActivity.this,
-                    "Event" ,Toast.LENGTH_SHORT).show();
-            if (userClass.isCall) {
-                //Произвести звонок
-                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + UserClass.numbSet)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                userClass.nCall();//Поставить запрет на вызов
-            }
-            h.postDelayed(this, 1000);
-        }
-    };
+    final String SAVED_TEXT = "saved_text";
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -65,12 +52,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Init();
     }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void Init() {
         Components();//Иницилизация компонентов
         Click();//СобытИЯ по кнопке
+        loadText();//Загрузка кэша
+    }
 
+    private void saveText() {
+        sPref = getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString("gNm", phoneGet.getText().toString());
+        ed.putString("sNm", phoneSet.getText().toString());
+        ed.putString("tx", txt.getText().toString());
+        ed.commit();
+        Toast.makeText(MainActivity.this, "Text saved", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadText() {
+        sPref = getSharedPreferences("MyPref", MODE_PRIVATE);
+        phoneGet.setText(sPref.getString("gNm", ""));
+        phoneSet.setText(sPref.getString("sNm", ""));
+        txt.setText(sPref.getString("tx",""));
+        Toast.makeText(MainActivity.this, "Text loaded", Toast.LENGTH_SHORT).show();
     }
 
     private void Components() {
@@ -101,16 +105,19 @@ public class MainActivity extends AppCompatActivity {
                 // установления над ними их незаконного владения.
 
                 //Запуск потока проверки
-                 run.run();
+                 //run.run();
+               // Context context = getApplicationContext();
+                Intent intent = new Intent(this, BackGroubd.class); // Build the intent for the service
+                ContextCompat.startForegroundService(this, intent);
+                saveText();
             }
             else { //Если поля пустые, предупредить
                 Show("Напишите что нибудь!");
             }
         });
+
         test.setOnClickListener(v ->{
-            Context context = getApplicationContext();
-            Intent intent = new Intent(context, BackGroubd.class); // Build the intent for the service
-            context.startForegroundService(intent);
+
         });
     }
 
